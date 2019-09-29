@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Number Guessing Game</title>
+    <style>
+        html,
+        body {
+            margin: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2 style="color: blue; margin-top: 20px">NUMBER GUESSING GAME</h2>
+        <h4> Tìm số trong phạm vi từ: <span id="range"></span></h4>
+        <div id="turnGuess"></div>
+        <div id="message" style="height: 50px"></div><br>
+        <input type="number" id="number">
+        <button id="guessButton">Đoán</button>
+        <br>
+        <h4>Các số đã đoán: </h4>
+        <div id="history"></div>
+    </div>
+
+    <script>
+        let historyArr = [];
+        let minValue, maxValue, result, turn, turn1, distance;
+        let range = document.getElementById("range");
+        let button = document.getElementById("guessButton");
+        let number = document.getElementById("number");
+        let message = document.getElementById("message");
+        let history = document.getElementById("history");
+        let turnGuess = document.getElementById("turnGuess");
+
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function initGame() {
+            minValue = random(-1000, 0);
+            maxValue = random(0, 1000);
+            distance = maxValue - minValue;
+            result = random(minValue, maxValue);
+            range.innerHTML = `<span style="color:violet">${minValue}</span> đến <span style="color:violet">${maxValue}</span>`;
+            if (distance >= 1000) turn = 15;
+            else turn = 10;
+            turnGuess.innerHTML = `Bạn có ${turn} lượt đoán`;
+            turn1 = turn;
+            number.focus();
+        }
+        
+        window.onload = function () {
+            initGame(); console.log(result);
+            button.addEventListener('click', function () {
+
+                if (number.value != '') {
+                    historyArr.push(number.value);
+                }
+                if (number.value == '') {
+                    message.style.color = "red";
+                    message.innerHTML = "Vui lòng nhập dự đoán của bạn";
+                    number.focus();
+                }
+                else if (number.value < minValue || number.value > maxValue) {
+                    turn--;
+                    message.style.color = "red";
+                    message.innerHTML = `Hãy tìm các số trong phạm vi. Bạn còn <span style="background: yellow;"> ${turn}</span> lượt đoán`;
+                    number.focus();
+
+                }
+                else if (number.value > result) {
+                    turn--;
+                    message.style.color = "red";
+                    message.innerHTML = `Xin lỗi bạn đoán quá cao. Bạn còn <span style="background: yellow;"> ${turn}</span> lượt đoán`;
+                    number.focus();
+                }
+                else if (number.value < result) {
+                    turn--;
+                    message.style.color = "red";
+                    message.innerHTML = `Xin lỗi bạn đoán quá thấp. Bạn còn <span style='background: yellow;'> ${turn}</span> lượt đoán`;
+                    number.focus();
+                }
+                else {
+                    message.style.color = "green";
+                    message.innerHTML = `<h3>Chúc mừng bạn đã chiến thắng !!!</h3> Đáp án chính xác là <span style='background: yellow;'>${result}</span>. Bạn mất <span style='background: yellow;'>${historyArr.length}</span> lần để đoán đúng.`;
+                    button.disabled = true;
+                }
+                if (historyArr.length == turn1) {
+                    button.disabled = true;
+                }
+                if (turn == 0) {
+                    message.style.color = "red";
+                    message.innerHTML = `Hết lượt đoán. <span style="font-weight: bold">Bạn đã thua.</span> Đáp án chính xác là <span style='background: yellow;'>${result}</span>`;
+                }
+                history.innerHTML = historyArr;
+            });
+        }
+    </script>
+</body>
+
+</html>
